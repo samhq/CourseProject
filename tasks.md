@@ -10,6 +10,8 @@ The backend tasks are broken into several tasks.
 
 ### User Management
 
+TODO: @samiul
+
 ### Crawling and Indexing
 
 Check `backend/contents.py` file.
@@ -20,6 +22,10 @@ Check `backend/search.py` file.
 
 ### Prepare Accuracy Test
 
+TODO:
+@samiul to define the tasks
+@grace and @yingchen to implement
+
 ### Backend `api`
 
 - `/register`   For registering a new user
@@ -29,3 +35,4 @@ Check `backend/search.py` file.
 
 ### Dockerization and Deployment
 
+TODO: @samiul
