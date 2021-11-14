@@ -1,10 +1,35 @@
 from utilities import *
+import requests
+from bs4 import BeautifulSoup
 
 
 def crawl(page_url):
     # given a website url, crawl that page, extract text
     # return the text
-    pass
+    
+    res = requests.get(page_url)
+    html_page = res.content
+    soup = BeautifulSoup(html_page, 'html.parser')
+    text = soup.find_all(text=True)
+
+    output = ''
+    blacklist = [
+        '[document]',
+        'noscript',
+        'header',
+        'html',
+        'meta',
+        'head',
+        'input',
+        'script'
+    ]
+
+    for t in text:
+        if t.parent.name not in blacklist:
+            output += '{} '.format(t)
+
+    # print(output)
+    return output
 
 
 def indexPage(page_url, user_id):
@@ -58,7 +83,7 @@ def fetch_contents(user_id):
     return contents
 
 def fetch_bookmarks(user_id, indices):
-    # TODO: fetch the list of urls
+    # TODO: fetch the list of urls (or maybe dict for urls and names)
     urls = []
     
     return urls
