@@ -1,4 +1,4 @@
-from rank_bm25 import *
+from rank_bm25 import BM25Okapi
 from contents import *
 from utilities import *
 
