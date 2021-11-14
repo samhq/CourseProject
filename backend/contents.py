@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 def crawl(page_url):
     # given a website url, crawl that page, extract text
     # return the text
-    
+
     res = requests.get(page_url)
     html_page = res.content
     soup = BeautifulSoup(html_page, 'html.parser')
@@ -40,7 +40,7 @@ def indexPage(page_url, user_id):
 
     msg = ""
     err = False
-    
+
     try:
         bookmark_file = user_id + "/bookmark.txt"
         content_file = user_id + "/contents.txt"
@@ -72,18 +72,19 @@ def indexPage(page_url, user_id):
     finally:
         # close any opened file
         pass
-    
+
     return msg
 
 
 def fetch_contents(user_id):
     # TODO: Add function to fetch bookmark contents given a specific user
     contents = []
-    
+
     return contents
+
 
 def fetch_bookmarks(user_id, indices):
     # TODO: fetch the list of urls (or maybe dict for urls and names)
     urls = []
-    
+
     return urls
