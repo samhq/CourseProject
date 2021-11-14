@@ -14,7 +14,7 @@ app_version = "v1.0"
 def index_page():
     resp = {}
     resp["error"] = False
-    resp["message"] = ""
+    resp["message"] = "Welcome to your personalized bookmark searching service"
     resp["version"] = app_version
     
     return jsonify(resp)
@@ -38,7 +38,7 @@ def get_search_results():
     return jsonify(resp)
 
 @app.route('/add', methods=['POST'])
-def get_search_results():
+def add_bookmark():
     resp = {}
     if request.method == 'POST' and request.json != None:
         bookmark_url = request.json.get("url")
