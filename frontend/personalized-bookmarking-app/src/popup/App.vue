@@ -6,8 +6,39 @@
 
 <script>
 export default {
-  data () {
-    return {}
+  created: function() {
+    // check if user is logged in
+    chrome.runtime.sendMessage({command: "checkAuth"}, (response) => {
+      console.log(response);
+      if (response.status == 'success') {
+        // redirect to user's content page
+      } else {
+        // stay on current login page
+      }
+    });
+  },
+  data() {
+    return {
+      email: "",
+      password: ""
+    }
+  },
+  methods: {
+    login() {
+      chrome.runtime.sendMessage({command: "login", data: {email: this.email, password: this.password}}, (response) => {
+        console.log(response);
+        if (response.status == 'success') {
+          // redirect to user's content page
+        } else {
+          // handle errors
+        }
+      });
+    },
+    logout() {
+      chrome.runtime.sendMessage({command: "logout"}, (response) => {
+        console.log(response);
+      });
+    }
   }
 }
 </script>
