@@ -2,7 +2,11 @@
 
 ## Frontend Tasks
 
-TODO: @xavier
+Frontend development will be on the Chrome extension itself. Below are the VueJS components to be developed.
+
+- Login Page
+- User Content Page with Bookmarking and Search functionality
+- Background script with event listeners
 
 ## Backend Tasks
 
