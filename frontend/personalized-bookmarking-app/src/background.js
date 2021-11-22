@@ -1,3 +1,4 @@
+import { initializeApp } from 'firebase/app';
 
 // Firebase configuration
 var firebaseConfig = {
@@ -10,7 +11,7 @@ var firebaseConfig = {
     appId: "x:xxxx:web:xxxxx"
   };
   // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
+  const app = initializeApp(firebaseConfig);
   
   console.log(firebase);
   

@@ -5,6 +5,7 @@ const CopyPlugin = require('copy-webpack-plugin');
 const ExtensionReloader = require('webpack-extension-reloader');
 const { VueLoaderPlugin } = require('vue-loader');
 const { version } = require('./package.json');
+const path = require('path');
 
 const config = {
   mode: process.env.NODE_ENV,
@@ -19,6 +20,9 @@ const config = {
   },
   resolve: {
     extensions: ['.js', '.vue'],
+    alias: {
+      '@': path.resolve('src')
+    }
   },
   module: {
     rules: [
@@ -34,14 +38,6 @@ const config = {
       {
         test: /\.css$/,
         use: [MiniCssExtractPlugin.loader, 'css-loader'],
-      },
-      {
-        test: /\.scss$/,
-        use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
-      },
-      {
-        test: /\.sass$/,
-        use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader?indentedSyntax'],
       },
       {
         test: /\.(png|jpg|jpeg|gif|svg|ico)$/,
@@ -74,6 +70,13 @@ const config = {
             options: {
               implementation: require('sass'),
               indentedSyntax: true // optional
+            },
+            // Requires >= sass-loader@^8.0.0
+            options: {
+              implementation: require('sass'),
+              sassOptions: {
+                indentedSyntax: true // optional
+              },
             },
           },
         ],
