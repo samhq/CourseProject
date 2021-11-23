@@ -59,6 +59,10 @@ export default {
         console.log(response);
         if (response) {
           if (response.status == 'success') {
+            console.log("Login Success")
+            chrome.storage.sync.set({'user': response.message}, function() {
+              console.log('Logged in user info is set');
+            });
             // redirect to user's content page
           } else {
             this.snackbar_text = "Error logging in! Please try again.";
