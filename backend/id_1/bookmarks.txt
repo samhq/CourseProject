@@ -1,0 +1,6 @@
+https://realpython.com/beautiful-soup-web-scraper-python/
+https://stackoverflow.com/questions/4690600/python-exception-message-capturing
+http://theory.stanford.edu/~amitp/GameProgramming/AStarComparison.html#the-a-star-algorithm
+https://dictionarylist.com/en-ur/traceback/
+https://open.cs.uwaterloo.ca/python-from-scratch/7/7/transcript
+https://renkun.me/2020/03/31/a-simple-way-to-show-stack-trace-on-error-in-r/
