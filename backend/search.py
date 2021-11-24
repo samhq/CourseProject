@@ -27,17 +27,17 @@ def search_query(query_terms, user_id, top_n, use_keyword_filter=True):
 
     return fetch_bookmarks(user_id, top_results)
 
-if __name__ == '__main__':
-    user_id = "id_1"
-    msg1 = indexPage("https://realpython.com/beautiful-soup-web-scraper-python/", user_id)
-    msg2 = indexPage("https://stackoverflow.com/questions/4690600/python-exception-message-capturing", user_id)
-    msg3 = indexPage("http://theory.stanford.edu/~amitp/GameProgramming/AStarComparison.html#the-a-star-algorithm", user_id)
-    msg4 = indexPage("https://dictionarylist.com/en-ur/traceback/", user_id)
-    msg5 = indexPage("https://open.cs.uwaterloo.ca/python-from-scratch/7/7/transcript", user_id)
-    msg6 = indexPage("https://renkun.me/2020/03/31/a-simple-way-to-show-stack-trace-on-error-in-r/", user_id)
-    query_terms = ['tracebackdef', 'blog']
-
-    n = 2
-    use_keyword_filter = True
-    top_n = search_query(query_terms, user_id, n, use_keyword_filter)
-    print(top_n)
+# if __name__ == '__main__':
+    # user_id = "id_1"
+    # msg1 = indexPage("https://realpython.com/beautiful-soup-web-scraper-python/", user_id)
+    # msg2 = indexPage("https://stackoverflow.com/questions/4690600/python-exception-message-capturing", user_id)
+    # msg3 = indexPage("http://theory.stanford.edu/~amitp/GameProgramming/AStarComparison.html#the-a-star-algorithm", user_id)
+    # msg4 = indexPage("https://dictionarylist.com/en-ur/traceback/", user_id)
+    # msg5 = indexPage("https://open.cs.uwaterloo.ca/python-from-scratch/7/7/transcript", user_id)
+    # msg6 = indexPage("https://renkun.me/2020/03/31/a-simple-way-to-show-stack-trace-on-error-in-r/", user_id)
+    # query_terms = ['tracebackdef', 'blog']
+    #
+    # n = 2
+    # use_keyword_filter = True
+    # top_n = search_query(query_terms, user_id, n, use_keyword_filter)
+    # print(top_n)
