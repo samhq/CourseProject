@@ -5,3 +5,11 @@ numpy==1.21.4
 requests==2.26.0
 rank-bm25==0.2.1
 beautifulsoup4==4.9.0
+python-jwt==2.0.1
+pyrebase 
+firebase-admin
+PyJWT
+# gcloud
+# sseclient
+# pycrypto
+# requests-toolbelt
