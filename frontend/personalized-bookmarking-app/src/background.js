@@ -1,16 +1,8 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import configJson from "@/config.json";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAM36yqurrk2ioTxKRMexHrXiaV7mZh0o4",
-  authDomain: "pbse-df479.firebaseapp.com",
-  projectId: "pbse-df479",
-  storageBucket: "pbse-df479.appspot.com",
-  messagingSenderId: "619390935453",
-  appId: "1:619390935453:web:edca38724cffca328ecf74"
-};
-
-const app = initializeApp(firebaseConfig);
+const app = initializeApp(configJson.firebaseConfig);
 const auth = getAuth();
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {

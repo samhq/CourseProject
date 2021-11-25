@@ -94,6 +94,8 @@ const config = {
     new CopyPlugin([
       { from: 'icons', to: 'icons', ignore: ['icon.xcf'] },
       { from: 'popup/popup.html', to: 'popup/popup.html', transform: transformHtml },
+      { from: 'services/api.js', to: 'services/api.js'},
+      { from: 'config.json', to: 'config.json'},
       {
         from: 'manifest.json',
         to: 'manifest.json',

@@ -13,7 +13,7 @@
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="12">
+        <v-col cols="12"></v-col>
       </v-row>
       <v-row>
         <v-col cols="1"></v-col>
@@ -23,7 +23,7 @@
         <v-col cols="1"></v-col>
       </v-row>
       <v-row>
-        <v-col cols="12">
+        <v-col cols="12"></v-col>
       </v-row>
       <v-row>
         <v-col cols="1"></v-col>
@@ -33,25 +33,25 @@
         <v-col cols="1"></v-col>
       </v-row>
       <v-row>
-        <v-col cols="12">
+        <v-col cols="12"></v-col>
       </v-row>
       <v-row>
         <v-col cols="2"></v-col>
         <v-col cols="3">
-          <v-btn type="button" v-on:click="login()">Login</v-btn>
+          <v-btn type="button" color="primary" v-on:click="login()">Login</v-btn>
         </v-col>
         <v-col cols="1"></v-col>
         <v-col cols="4">
-          <v-btn type="button" v-on:click="register()">Register</v-btn>
+          <v-btn type="button" color="secondary" v-on:click="register()">Register</v-btn>
         </v-col>
         <v-col cols="2"></v-col>
       </v-row>
     </v-container>
     <v-container v-else id="content">
-      <vue-tabs @tab-change="handleTabChange">
+      <vue-tabs ref="tabs" @tab-change="handleTabChange">
         <v-tab title="Welcome">
           <v-row>
-            <v-col cols="12">
+            <v-col cols="12"></v-col>
           </v-row>
           <v-row>
             <v-col cols="12">
@@ -72,19 +72,18 @@
           <v-row>
             <v-col cols="2"></v-col>
             <v-col cols="4">
-              <v-btn type="button" v-on:click="addBookmark()">Add Bookmark</v-btn>
+              <v-btn type="button" color="primary" v-on:click="addBookmark()">Add Bookmark</v-btn>
             </v-col>
-            <v-col cols="1">
-            </v-col>
+            <v-col cols="1"></v-col>
             <v-col cols="3">
-              <v-btn type="button" v-on:click="logout()">Logout</v-btn>
+              <v-btn type="button" color="error" v-on:click="logout()">Logout</v-btn>
             <v-col>
             <v-col cols="2"></v-col>
           <v-row>
         </v-tab>
         <v-tab title="Search">
           <v-row>
-            <v-col cols="12">
+            <v-col cols="12"></v-col>
           </v-row>
           <v-row>
             <v-col cols="9">
@@ -95,16 +94,24 @@
             </v-col>
           <v-row>
           <v-row>
-            <v-col cols="4"></v-col>
-            <v-col cols="4">
-              <v-btn type="button" v-on:click="searchBookmarks()">Search</v-btn>
+            <v-col cols="2"></v-col>
+            <v-col cols="3">
+              <v-btn type="button" color="primary" v-on:click="switchTab(2); searchBookmarks()">Search</v-btn>
             </v-col>
-            <v-col cols="4"></v-col>
+            <v-col cols="4">
+              <v-btn type="button" color="secondary" v-on:click="switchTab(2); loadAllBookmarks()">All Bookmarks</v-btn>
+            <v-col>
+            <v-col cols="1"></v-col>
+            <v-col cols="2"></v-col>
           </v-row>
         </v-tab>
-        <v-tab title="All Bookmarks">
+        <v-tab title="Bookmarks">
           <v-row>
-            <v-col cols="12">
+            <v-col cols="12"></v-col>
+          </v-row>
+          <v-row v-for="(bookmark, index) in bookmarks" :key="bookmark.name">
+            <v-btn v-if="bookmark.name.length <= 28" tile block @click="openUrl(bookmark.url)">{{ index + 1 }}. {{ bookmark.name }}</v-btn>
+            <v-btn v-else tile block @click="openUrl(bookmark.url)">{{ index + 1 }}. {{ bookmark.name.substring(0, 28) + "..." }}</v-btn>
           </v-row>
         </v-tab>
       </vue-tabs>
@@ -118,14 +125,17 @@
 </template>
 
 <script>
-import {VueTabs, VTab} from "vue-nav-tabs/dist/vue-tabs.js"
-import "vue-nav-tabs/themes/vue-tabs.css"
+import api from "@/services/api";
+import {VueTabs, VTab} from "vue-nav-tabs/dist/vue-tabs.js";
+import "vue-nav-tabs/themes/vue-tabs.css";
 export default {
   components: {VueTabs, VTab},
   created: function() {
     var vm = this;
     // set current page title as bookmark name
     vm.setTitleAsBookmarkName();
+    // retrieve all bookmarks and display them in the bookmarks tab upon initlal page load
+    vm.loadAllBookmarks();
     // check if user is logged in
     chrome.runtime.sendMessage({command: "checkAuth"}, (response) => {
       if (response.status == "success") {
@@ -145,6 +155,10 @@ export default {
       authed: false,
       bookmark_name: "",
       bookmark_url: "",
+      bookmarks: [
+        {name: "BookMark1", url: "https://www.linkedin.com"},
+        {name: "BookMark2", url: "https://www.reddit.com"}
+      ],
       query: "",
       selected_top: {name: "Top5", value: 5},
       top_items: [
@@ -155,6 +169,7 @@ export default {
       ],
       snackbar: false,
       snackbar_text: "",
+      tabName: "",
     }
   },
   methods: {    
@@ -174,12 +189,12 @@ export default {
             } else if (response.message.code == "auth/email-already-in-use") {
               vm.snackbar_text = "The account already exists for that email.";
             } else {
-              vm.snackbar_text = "Error in registration, please try again later.";
+              vm.snackbar_text = "Error in registration.";
             }
             vm.snackbar = true;
           }
         } else {
-          vm.snackbar_text = "Error in registration, please try again later.";
+          vm.snackbar_text = "Error in registration.";
           vm.snackbar = true;
         }
       });
@@ -200,12 +215,12 @@ export default {
             } else if (response.message.code == "auth/wrong-password") {
               vm.snackbar_text = "Wrong password provided for that user.";
             } else {
-              vm.snackbar_text = "Error logging in, please try again later.";
+              vm.snackbar_text = "Error logging in.";
             }
             vm.snackbar = true;
           }
         } else {
-          vm.snackbar_text = "Error logging in, please try again later.";
+          vm.snackbar_text = "Error logging in.";
           vm.snackbar = true;
         }
       });
@@ -218,11 +233,11 @@ export default {
             vm.user = null;
             vm.authed = false;
           } else {
-            vm.snackbar_text = "Error logging out! Please try again.";
+            vm.snackbar_text = "Error logging out.";
             vm.snackbar = true;
           }
         } else {
-          vm.snackbar_text = "Error logging out! Please try again.";
+          vm.snackbar_text = "Error logging out.";
           vm.snackbar = true;
         }
       });
@@ -231,15 +246,54 @@ export default {
       if (newTab.tabId == "Welcome") {
         this.setTitleAsBookmarkName();
       }
-      if (newTab.tabId == "All Bookmarks") {
-        // retrieve bookmarks from API and update all_bookmarks variable
-      }
     },
     setTitleAsBookmarkName(){
       var vm = this;
       chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
         vm.bookmark_name = tabs[0].title;
         vm.bookmark_url = tabs[0].url;
+      });
+    },
+    openUrl(url) {
+      chrome.tabs.create({ url: url, active: false });
+    },
+    switchTab(tab_index){
+      this.$refs.tabs.navigateToTab(tab_index)
+    },
+    addBookmark() {
+      var vm = this;
+      api.post("/add_bookmark").then((response) => {
+        console.log(response);
+        vm.snackbar_text = "Sucessfully added bookmark.";
+        vm.snackbar = true;
+      }).catch((error) => {
+        console.log(error);
+        vm.snackbar_text = "Error adding bookmark.";
+        vm.snackbar = true;
+      });
+    },
+    searchBookmarks() {
+      var vm = this;
+      api.post("/search_bookmark").then((response) => {
+        console.log(response);
+        vm.snackbar_text = "Bookmark search results retrieved successfully.";
+        vm.snackbar = true;
+      }).catch((error) => {
+        console.log(error);
+        vm.snackbar_text = "Error retrieving bookmark search results.";
+        vm.snackbar = true;
+      });
+    },
+    loadAllBookmarks() {
+      var vm = this;
+      api.get("/all_bookmarks").then((response) => {
+        console.log(response);
+        vm.snackbar_text = "All bookmarks retrieved successfully.";
+        vm.snackbar = true;
+      }).catch((error) => {
+        console.log(error);
+        vm.snackbar_text = "Error retrieving all bookmarks.";
+        vm.snackbar = true;
       });
     }
   }
