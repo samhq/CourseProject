@@ -1,9 +1,7 @@
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+import { initializeApp } from "firebase/app";
+import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
 
-// Firebase configuration
-var firebaseConfig = {
+const firebaseConfig = {
   apiKey: "AIzaSyAM36yqurrk2ioTxKRMexHrXiaV7mZh0o4",
   authDomain: "pbse-df479.firebaseapp.com",
   projectId: "pbse-df479",
@@ -11,51 +9,48 @@ var firebaseConfig = {
   messagingSenderId: "619390935453",
   appId: "1:619390935453:web:edca38724cffca328ecf74"
 };
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
 
-chrome.runtime.onMessage.addListener((msg, sender, response) => {
-  if (msg.command == 'checkAuth') {
-    var user = firebase.auth().currentUser;
-    if (user) {
-      // User is signed in.
-      response({type: "auth", status: "success", message: user});
-    } else {
-      // No user is signed in.
-      response({type: "auth", status: "no-auth", message: false});
-    }
-  }
-  if (msg.command == 'login') {
-    console.log(msg.data);
-    var email = msg.data.email;
-    var password = msg.data.password;
-    //Add seperate values for auth info here instead of fixed variables...
-    firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
-      // Handle Errors here.
-      var errorCode = error.code;
-      var errorMessage = error.message;
-      console.log(error);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth();
 
-      response({type: "auth", status: "error", message: error});
-      // ...
-    });
-    firebase.auth().onAuthStateChanged(function(user) {
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.command == "checkAuth") {
+    onAuthStateChanged(auth, (user) => {
       if (user) {
-        // User is signed in.
-        console.log(user);
-        response({type: "auth", status: "success", message: user});
+        sendResponse({status: "success", message: user});
       } else {
-        // No user is signed in.
+        sendResponse({status: "no-auth", message: null});
       }
     });
   }
-  if (msg.command == 'logout') {
-    firebase.auth().signOut().then(function() {
-      // Sign-out successful.
-      response({type: "un-auth", status: "success", message: true});
-    }, function(error) {
-      // An error happened.
-      response({type: "un-auth", status: "false", message: error});
+
+  if (message.command == "register") {
+    var email = message.data.email;
+    var password = message.data.password;
+    createUserWithEmailAndPassword(auth, email, password).then((userCredential) => {
+      const user = userCredential.user;
+      sendResponse({status: "success", message: user});
+    }).catch((error) => {
+      sendResponse({status: "error", message: error});
+    });
+  }
+
+  if (message.command == "login") {
+    var email = message.data.email;
+    var password = message.data.password;
+    signInWithEmailAndPassword(auth, email, password).then((userCredential) => {
+      const user = userCredential.user;
+      sendResponse({status: "success", message: user});
+    }).catch((error) => {
+      sendResponse({status: "error", message: error});
+    });
+  }
+
+  if (message.command == "logout") {
+    signOut(auth).then(() => {
+      sendResponse({status: "success", message: true});
+    }).catch((error) => {
+      sendResponse({status: "error", message: error});
     });
   }
 
