@@ -1,8 +1,6 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from search import search_query
-from user import *
-from contents import indexPage
+from bookmark import *
 import json
 import firebase_admin
 import pyrebase
@@ -85,7 +83,7 @@ def index_page():
 @check_token
 def get_all_bookmarks():
     resp = all_bookmarks(request.user)
-    
+
     return jsonify(resp)
 
 
@@ -97,7 +95,7 @@ def search_bookmark():
         query = request.json.get("query")
         top_n = request.json.get("top_n")
 
-        resp = search_query(query, top_n, request.user)
+        resp = search_with_query(query, top_n, request.user)
     else:
         resp["error"] = True
         resp["message"] = "no json request object found"
@@ -111,7 +109,7 @@ def add_bookmark():
         bookmark_title = request.json.get("bookmark_name")
         bookmark_url = request.json.get("webpage_url")
 
-        resp = indexPage(bookmark_title, bookmark_url, request.user)
+        resp = add_to_bookmark(bookmark_title, bookmark_url, request.user)
     else:
         resp["error"] = True
         resp["message"] = "no json request object found"
