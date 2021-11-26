@@ -40,11 +40,11 @@
         <v-col cols="3">
           <v-btn type="button" color="primary" v-on:click="login()">Login</v-btn>
         </v-col>
-        <v-col cols="1"></v-col>
+        <v-col cols="2"></v-col>
         <v-col cols="4">
           <v-btn type="button" color="secondary" v-on:click="register()">Register</v-btn>
         </v-col>
-        <v-col cols="2"></v-col>
+        <v-col cols="1"></v-col>
       </v-row>
     </v-container>
     <v-container v-else id="content">
@@ -109,9 +109,18 @@
           <v-row>
             <v-col cols="12"></v-col>
           </v-row>
-          <v-row v-for="(bookmark, index) in bookmarks" :key="bookmark.name">
-            <v-btn v-if="bookmark.name.length <= 28" tile block @click="openUrl(bookmark.url)">{{ index + 1 }}. {{ bookmark.name }}</v-btn>
-            <v-btn v-else tile block @click="openUrl(bookmark.url)">{{ index + 1 }}. {{ bookmark.name.substring(0, 28) + "..." }}</v-btn>
+          <v-row no-gutters v-for="(bookmark, index) in bookmarks" :key="bookmark.name">
+            <v-col no-gutters cols="11">
+              <v-btn v-if="bookmark.name.length <= 28" tile block @click="openUrl(bookmark.url)">{{ index + 1 }}. {{ bookmark.name }}</v-btn>
+              <v-btn v-else tile block @click="openUrl(bookmark.url)">{{ index + 1 }}. {{ bookmark.name.substring(0, 28) + "..." }}</v-btn>
+            </v-col>
+            <v-col no-gutters cols="1">
+            <v-btn tile block color="error">
+              <v-icon>
+                mdi-delete
+              </v-icon>
+            </v-btn>
+            </v-col>
           </v-row>
         </v-tab>
       </vue-tabs>
@@ -156,7 +165,7 @@ export default {
       bookmark_name: "",
       bookmark_url: "",
       bookmarks: [
-        {name: "BookMark1", url: "https://www.linkedin.com"},
+        {name: "BookMark1MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM", url: "https://www.linkedin.com"},
         {name: "BookMark2", url: "https://www.reddit.com"}
       ],
       query: "",
