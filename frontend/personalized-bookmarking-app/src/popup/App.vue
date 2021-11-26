@@ -109,17 +109,28 @@
           <v-row>
             <v-col cols="12"></v-col>
           </v-row>
-          <v-row no-gutters v-for="(bookmark, index) in bookmarks" :key="bookmark.name">
-            <v-col no-gutters cols="11">
-              <v-btn v-if="bookmark.name.length <= 28" tile block @click="openUrl(bookmark.url)">{{ index + 1 }}. {{ bookmark.name }}</v-btn>
-              <v-btn v-else tile block @click="openUrl(bookmark.url)">{{ index + 1 }}. {{ bookmark.name.substring(0, 28) + "..." }}</v-btn>
+          <v-row>
+            <v-col class="d-flex align-center" cols="12">
+              <v-toolbar dense>
+                <v-spacer />
+                <v-toolbar-title class="headline text-uppercase">
+                  <h6>{{ bookmarks.length }} bookmarks returned</h6>
+                </v-toolbar-title>
+                <v-spacer />
+              </v-toolbar>
             </v-col>
-            <v-col no-gutters cols="1">
-            <v-btn tile block color="error">
-              <v-icon>
-                mdi-delete
-              </v-icon>
-            </v-btn>
+          </v-row>
+          <v-row dense v-for="bookmark in bookmarks" :key="bookmark.name">
+            <v-col no-gutters cols="10">
+              <v-btn v-if="bookmark.name.length <= 24" tile block style="text-transform:none !important;" @click="openUrl(bookmark.url)">{{ bookmark.name }}</v-btn>
+              <v-btn v-else tile block style="text-transform:none !important;" @click="openUrl(bookmark.url)">{{ bookmark.name.substring(0, 24) + "..." }}</v-btn>
+            </v-col>
+            <v-col dense cols="2">
+              <v-btn tile block color="error">
+                <v-icon>
+                  mdi-delete
+                </v-icon>
+              </v-btn>
             </v-col>
           </v-row>
         </v-tab>
@@ -165,8 +176,8 @@ export default {
       bookmark_name: "",
       bookmark_url: "",
       bookmarks: [
-        {name: "BookMark1", url: "https://www.linkedin.com"},
-        {name: "BookMark2", url: "https://www.reddit.com"}
+        {name: "Bookmark1", url: "https://www.linkedin.com"},
+        {name: "Bookmark2", url: "https://www.reddit.com"}
       ],
       query: "",
       selected_top: {name: "Top5", value: 5},
@@ -175,6 +186,7 @@ export default {
         {name: "Top10", value: 10},
         {name: "Top15", value: 15},
         {name: "Top20", value: 20},
+        {name: "Top25", value: 25},
       ],
       snackbar: false,
       snackbar_text: "",
