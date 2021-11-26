@@ -165,7 +165,7 @@ export default {
       bookmark_name: "",
       bookmark_url: "",
       bookmarks: [
-        {name: "BookMark1MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM", url: "https://www.linkedin.com"},
+        {name: "BookMark1", url: "https://www.linkedin.com"},
         {name: "BookMark2", url: "https://www.reddit.com"}
       ],
       query: "",
