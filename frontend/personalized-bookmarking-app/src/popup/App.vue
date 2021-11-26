@@ -99,7 +99,7 @@
               <v-btn type="button" color="primary" v-on:click="switchTab(2); searchBookmarks()">Search</v-btn>
             </v-col>
             <v-col cols="4">
-              <v-btn type="button" color="secondary" v-on:click="switchTab(2); loadAllBookmarks()">All Bookmarks</v-btn>
+              <v-btn type="button" color="secondary" v-on:click="switchTab(2); loadAllBookmarks(true)">All Bookmarks</v-btn>
             <v-col>
             <v-col cols="1"></v-col>
             <v-col cols="2"></v-col>
@@ -134,13 +134,13 @@ export default {
     var vm = this;
     // set current page title as bookmark name
     vm.setTitleAsBookmarkName();
-    // retrieve all bookmarks and display them in the bookmarks tab upon initlal page load
-    vm.loadAllBookmarks();
     // check if user is logged in
     chrome.runtime.sendMessage({command: "checkAuth"}, (response) => {
       if (response.status == "success") {
         vm.user = response.message;
         vm.authed = true;
+        // retrieve all bookmarks and display them in the bookmarks tab upon initlal page load
+        vm.loadAllBookmarks(false);
       } else {
         vm.user = null;
         vm.authed = false;
@@ -206,6 +206,7 @@ export default {
           if (response.status == "success") {
             vm.user = response.message;
             vm.authed = true;
+            vm.loadAllBookmarks(false);
             vm.snackbar_text = "Successfully logged in.";
             vm.snackbar = true;
             console.log(vm.user);
@@ -284,16 +285,23 @@ export default {
         vm.snackbar = true;
       });
     },
-    loadAllBookmarks() {
+    loadAllBookmarks(messageBoolean) {
       var vm = this;
       api.get("/all_bookmarks").then((response) => {
         console.log(response);
-        vm.snackbar_text = "All bookmarks retrieved successfully.";
-        vm.snackbar = true;
+        if (messageBoolean){
+          vm.snackbar_text = "All bookmarks retrieved successfully.";
+          vm.snackbar = true;
+        }
       }).catch((error) => {
         console.log(error);
-        vm.snackbar_text = "Error retrieving all bookmarks.";
-        vm.snackbar = true;
+        if (messageBoolean){
+          vm.snackbar_text = "Error retrieving all bookmarks.";
+          vm.snackbar = true;
+        } else {
+          vm.snackbar_text = "Error loading all bookmarks.";
+          vm.snackbar = true;
+        }
       });
     }
   }
