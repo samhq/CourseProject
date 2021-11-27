@@ -76,15 +76,5 @@ def indexPage(page_url, user_id):
     return msg
 
 
-def fetch_contents(user_id):
-    # TODO: Add function to fetch bookmark contents given a specific user
-    contents = []
-
-    return contents
-
-
-def fetch_bookmarks(user_id, indices):
-    # TODO: fetch the list of urls (or maybe dict for urls and names)
-    urls = []
-
-    return urls
+def final_content(url):
+    return ""

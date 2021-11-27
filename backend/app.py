@@ -13,9 +13,13 @@ CORS(app, origins='*')
 
 app_version = "v1.0"
 
+databaseURL = 'https://pbse-df479-default-rtdb.asia-southeast1.firebasedatabase.app/'
+
 # Connect to firebase
 cred = credentials.Certificate('fbAdminConfig.json')
-firebase = firebase_admin.initialize_app(cred)
+firebase = firebase_admin.initialize_app(cred, {
+    'databaseURL': databaseURL
+})
 pb = pyrebase.initialize_app(json.load(open('fbconfig.json')))
 
 
@@ -23,12 +27,12 @@ def check_token(f):
     @wraps(f)
     def wrap(*args, **kwargs):
         if not request.headers.get('authorization'):
-            return {'message': 'No token provided'}, 400
+            return {'error': True, 'message': f'No token provided'}, 400
         try:
             user = auth.verify_id_token(request.headers['authorization'])
             request.user = user
         except:
-            return {'message': 'Invalid token provided.'}, 400
+            return {'error': True, 'message': f'Invalid token provided.'}, 400
         return f(*args, **kwargs)
     return wrap
 
@@ -36,7 +40,7 @@ def check_token(f):
 @app.route('/api/userinfo')
 @check_token
 def userinfo():
-    return {'data': request.user}, 200
+    return {'data': request.user["uid"]}, 200
 
 
 @app.route('/api/signup', methods=['POST'])
@@ -44,15 +48,15 @@ def signup():
     email = request.form.get('email')
     password = request.form.get('password')
     if email is None or password is None:
-        return {'message': 'Error missing email or password'}, 400
+        return {'error': True, 'message': f'Error missing email or password'}, 400
     try:
         user = auth.create_user(
             email=email,
             password=password
         )
-        return {'message': f'Successfully created user {user.uid}'}, 200
+        return {'error': False, 'message': f'Successfully created user {user.uid}'}, 200
     except:
-        return {'message': 'Error creating user'}, 400
+        return {'error': True, 'message': f'Error creating user'}, 400
 
 # Api route to get a new token for a valid user
 
@@ -66,55 +70,89 @@ def token():
         jwt = user['idToken']
         return {'token': jwt}, 200
     except:
-        return {'message': 'There was an error logging in'}, 400
+        return {'error': True, 'message': f'There was an error logging in'}, 400
 
 
 @app.route('/')
 def index_page():
-    resp = {}
-    resp["error"] = False
-    resp["message"] = "Welcome to your personalized bookmark searching service"
-    resp["version"] = app_version
-
-    return jsonify(resp)
+    return {
+        "error": False,
+        "message": f"Welcome to your personalized bookmark searching service",
+        "version": app_version
+    }, 200
 
 
 @app.route('/get_all_bookmarks', methods=['GET'])
 @check_token
 def get_all_bookmarks():
-    resp = all_bookmarks(request.user)
+    try:
+        resp = all_bookmarks(request.user["uid"])
+        if (resp["error"]):
+            return {'error': True, 'message': resp["message"]}, 400
 
-    return jsonify(resp)
+        return resp, 200
+    except Exception as e:
+        return {'error': True, 'message': str(e)}, 400
 
 
 @app.route('/search_bookmark', methods=['POST'])
 @check_token
 def search_bookmark():
     resp = {}
-    if request.json != None:
-        query = request.json.get("query")
-        top_n = request.json.get("top_n")
+    query = request.form.get("query")
+    top_n = request.form.get("top_n")
 
-        resp = search_with_query(query, top_n, request.user)
-    else:
-        resp["error"] = True
-        resp["message"] = "no json request object found"
-    return jsonify(resp)
+    if query is None or top_n is None:
+        return {'error': True, 'message': f'Error missing query and top_n'}, 400
+
+    try:
+        resp = search_with_query(query, top_n, request.user["uid"])
+        if (resp["error"]):
+            return {'error': True, 'message': resp["message"]}, 400
+
+        return resp, 200
+    except Exception as e:
+        return {'error': True, 'message': str(e)}, 400
 
 
 @app.route('/add_bookmark', methods=['POST'])
+@check_token
 def add_bookmark():
     resp = {}
-    if request.json != None:
-        bookmark_title = request.json.get("bookmark_name")
-        bookmark_url = request.json.get("webpage_url")
+    bookmark_title = request.form.get("bookmark_name")
+    bookmark_url = request.form.get("webpage_url")
 
-        resp = add_to_bookmark(bookmark_title, bookmark_url, request.user)
-    else:
-        resp["error"] = True
-        resp["message"] = "no json request object found"
+    if bookmark_title is None or bookmark_url is None:
+        return {'error': True, 'message': f'Error missing bookmark name and url'}, 400
 
-    return jsonify(resp)
+    try:
+        resp = add_to_bookmark(
+            bookmark_title, bookmark_url, request.user["uid"])
+        if (resp["error"]):
+            return {'error': True, 'message': resp["message"]}, 400
+
+        return resp, 200
+    except Exception as e:
+        return {'error': True, 'message': str(e)}, 400
+
+
+@app.route('/delete_bookmark', methods=['POST'])
+@check_token
+def delete_bookmark():
+    resp = {}
+    bookmark_id = request.form.get("bookmark_id")
+
+    if bookmark_id is None:
+        return {'error': True, 'message': f'Error missing bookmark id'}, 400
+
+    try:
+        resp = delete_from_bookmark(bookmark_id, request.user["uid"])
+        if (resp["error"]):
+            return {'error': True, 'message': resp["message"]}, 400
+
+        return resp, 200
+    except Exception as e:
+        return {'error': True, 'message': str(e)}, 400
 
 
 if __name__ == '__main__':

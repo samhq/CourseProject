@@ -7,4 +7,4 @@ def remove_special_characters(text):
 
 
 def remove_stop_words_and_tokenize(text):
-    return remove_stopwords(text.lower())
+    return remove_stopwords(text.lower()).split(" ")
