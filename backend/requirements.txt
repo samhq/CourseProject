@@ -9,6 +9,7 @@ python-jwt==2.0.1
 pyrebase 
 firebase-admin
 PyJWT
+nltk
 # gcloud
 # sseclient
 # pycrypto
