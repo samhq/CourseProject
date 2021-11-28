@@ -11,7 +11,3 @@ firebase-admin
 PyJWT
 nltk
 gunicorn==20.1.0
-# gcloud
-# sseclient
-# pycrypto
-# requests-toolbelt
