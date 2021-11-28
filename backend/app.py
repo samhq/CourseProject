@@ -17,7 +17,6 @@ app_version = "v1.0"
 databaseURL = os.environ.get('DATABASE_URL', '')
 if (len(databaseURL) == 0):
     raise RuntimeError('DATABASE_URL is not set')
-# databaseURL = 'https://pbse-df479-default-rtdb.asia-southeast1.firebasedatabase.app/'
 
 # Connect to firebase
 cred = credentials.Certificate('fbAdminConfig.json')
