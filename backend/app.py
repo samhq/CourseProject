@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, request
 from flask_cors import CORS
 from bookmark import *
 import json
@@ -6,6 +6,7 @@ import firebase_admin
 import pyrebase
 from firebase_admin import credentials, auth
 from functools import wraps
+import os
 
 app = Flask(__name__, static_folder='static', static_url_path='')
 
@@ -13,7 +14,10 @@ CORS(app, origins='*')
 
 app_version = "v1.0"
 
-databaseURL = 'https://pbse-df479-default-rtdb.asia-southeast1.firebasedatabase.app/'
+databaseURL = os.environ.get('DATABASE_URL', '')
+if (len(databaseURL) == 0):
+    raise RuntimeError('DATABASE_URL is not set')
+# databaseURL = 'https://pbse-df479-default-rtdb.asia-southeast1.firebasedatabase.app/'
 
 # Connect to firebase
 cred = credentials.Certificate('fbAdminConfig.json')
@@ -156,4 +160,4 @@ def delete_bookmark():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
