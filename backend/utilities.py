@@ -1,8 +1,10 @@
 import re
+import nltk
 from gensim.parsing.preprocessing import remove_stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import PorterStemmer
 
+nltk.download('punkt')
 
 def remove_special_characters(lst):
     lst1 = list()
