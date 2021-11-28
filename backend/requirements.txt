@@ -1,7 +1,14 @@
 Flask==2.0.2
 Flask-Cors==3.0.10
+pycryptodome
 gensim==4.1.2
 numpy==1.21.4
 requests==2.26.0
 rank-bm25==0.2.1
 beautifulsoup4==4.9.0
+python-jwt==2.0.1
+pyrebase 
+firebase-admin
+PyJWT
+nltk
+gunicorn==20.1.0
