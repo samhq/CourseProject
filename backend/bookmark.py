@@ -54,7 +54,7 @@ def search_with_query(query, top_n, user_id):
         return all_b
 
     bookmarks = all_b["bookmarks"]
-    if(len(bookmarks) == 0):
+    if(bookmarks is None or len(bookmarks) == 0):
         return {
             "error": True,
             "message": f"No bookmarks to search in",
@@ -75,7 +75,9 @@ def search_with_query(query, top_n, user_id):
             result[rid] = bookmarks[rid]
             result[rid]["score"] = v
 
-        b_dict = clean_bookmarks_content(result, True)
+        b_dict = {}
+        if (res_ids is not None and len(res_ids) > 0):
+            b_dict = clean_bookmarks_content(result, True)
 
         return {
             "error": False,
@@ -102,7 +104,9 @@ def all_bookmarks(user_id):
             "bookmarks": {}
         }
 
-    b_dict = clean_bookmarks_content(res["bookmarks"])
+    b_dict = {}
+    if (res["bookmarks"] is not None and len(res["bookmarks"]) > 0):
+        b_dict = clean_bookmarks_content(res["bookmarks"])
 
     return {
         "error": error,
