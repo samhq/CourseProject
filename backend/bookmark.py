@@ -56,7 +56,7 @@ def search_with_query(query, top_n, user_id):
     bookmarks = all_b["bookmarks"]
     if(bookmarks is None or len(bookmarks) == 0):
         return {
-            "error": True,
+            "error": False,
             "message": f"No bookmarks to search in",
             "bookmarks": {}
         }
