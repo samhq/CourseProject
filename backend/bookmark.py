@@ -6,6 +6,7 @@ from contents import final_content
 def add_to_bookmark(bookmark_title, bookmark_url, user_id):
     error = False
     msg = "Bookmark added"
+    new_bookmark_id = None
 
     try:
         parsed_content = final_content(bookmark_url)
@@ -16,14 +17,16 @@ def add_to_bookmark(bookmark_title, bookmark_url, user_id):
             "url": bookmark_url,
             "content": parsed_content,
         }
-        ref.push().set(content)
+        p = ref.push(content)
+        new_bookmark_id = p.key
     except Exception as e:
         error = True
         msg = str(e)
 
     return {
         "error": error,
-        "message": msg
+        "message": msg,
+        "bookmark_id": new_bookmark_id
     }
 
 
@@ -66,7 +69,6 @@ def search_with_query(query, top_n, user_id):
 
     try:
         res_ids = search_query(query, top_n, corpus)
-        print(res_ids)
         result = {}
         for k, v in res_ids.items():
             rid = ids[k]

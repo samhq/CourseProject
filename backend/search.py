@@ -4,7 +4,7 @@ import numpy as np
 import operator
 
 
-def search_query(query, top_n, corpus):
+def search_query(query, top_n=5, corpus=[]):
     tokenized_corpus = [doc.split(" ") for doc in corpus]
     tokenized_query = tokenize_str(query)
     bm25 = BM25Okapi(tokenized_corpus)

@@ -6,6 +6,7 @@ from nltk.stem import PorterStemmer
 
 nltk.download('punkt')
 
+
 def remove_special_characters(lst):
     lst1 = list()
     for element in lst:
@@ -23,17 +24,26 @@ def stemming(lst):
     return lst1
 
 
-def tokenize_str(text):
-    # 1. Removing stop words
-    text = remove_stopwords(text.lower())
+def remove_multiple_spaces(text):
+    return re.sub('\s+', ' ', text).strip()
 
-    # 2. Tokenization
+
+def tokenize_str(text):
+    # 1. Removing multiple spaces
+    text = remove_multiple_spaces(text.lower())
+
+    # 2. Removing stop words
+    text = remove_stopwords(text)
+
+    # 3. Tokenization
     words = word_tokenize(text)
 
-    # 3. Removing special characters
+    # 4. Removing special characters
     words = remove_special_characters(words)
 
-    # 4. Stemming
+    # 5. Stemming
     words = stemming(words)
+    
+    words = list(filter(None, words))
 
     return words

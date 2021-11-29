@@ -9,6 +9,7 @@ from functools import wraps
 import os
 
 app = Flask(__name__, static_folder='static', static_url_path='')
+app.config['JSON_SORT_KEYS'] = False
 
 CORS(app, origins='*')
 
