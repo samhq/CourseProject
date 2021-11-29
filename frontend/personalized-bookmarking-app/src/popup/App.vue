@@ -58,7 +58,7 @@
               <v-toolbar>
                 <v-spacer />
                 <v-toolbar-title class="headline text-uppercase">
-                  <h6>Hello, {{ user.user.email }}</h6>
+                  <h6>Hello, {{ user.email }}</h6>
                 </v-toolbar-title>
                 <v-spacer />
               </v-toolbar>
@@ -90,7 +90,7 @@
               <v-text-field type="text" name="query" v-model="query" placeholder="Query"></v-text-field>
             </v-col>
             <v-col cols="3">
-              <v-select :items="top_items" item-text="name" item-value="value" v-model="selected_top"></v-select>
+              <v-select :items="top_items" item-text="name" item-value="value" v-model="selected_top" return-object></v-select>
             </v-col>
           <v-row>
           <v-row>
@@ -284,7 +284,7 @@ export default {
     addBookmark() {
       var vm = this;
       const config = {
-        headers: {'Content-Type': 'multipart/form-data', 'Authorization': vm.user.token}
+        headers: {'Content-Type': 'multipart/form-data', 'Authorization': vm.user.stsTokenManager.accessToken}
       };
       var body = new FormData();
       body.append('bookmark_name', vm.bookmark_name);
@@ -304,7 +304,7 @@ export default {
     deleteBookmark(delete_bookmark) {
       var vm = this;
       const config = {
-        headers: {'Content-Type': 'multipart/form-data', 'Authorization': vm.user.token}
+        headers: {'Content-Type': 'multipart/form-data', 'Authorization': vm.user.stsTokenManager.accessToken}
       };
       var body = new FormData();
       body.append('bookmark_id', delete_bookmark.id);
@@ -327,7 +327,7 @@ export default {
     searchBookmarks() {
       var vm = this;
       const config = {
-        headers: {'Content-Type': 'multipart/form-data', 'Authorization': vm.user.token}
+        headers: {'Content-Type': 'multipart/form-data', 'Authorization': vm.user.stsTokenManager.accessToken}
       };
       var body = new FormData();
       body.append('query', vm.query);
@@ -352,7 +352,7 @@ export default {
     loadAllBookmarks(messageBoolean) {
       var vm = this;
       const config = {
-        headers: {'Authorization': vm.user.token}
+        headers: {'Authorization': vm.user.stsTokenManager.accessToken}
       };
       api.get("/get_all_bookmarks", config).then((response) => {
         console.log(response);
