@@ -122,11 +122,17 @@
           </v-row>
           <v-row dense v-for="bookmark in bookmarks" :key="bookmark.name">
             <v-col no-gutters cols="10">
-              <v-btn v-if="bookmark.name.length <= 24" tile block style="text-transform:none !important;" @click="openUrl(bookmark.url)">{{ bookmark.name }}</v-btn>
-              <v-btn v-else tile block style="text-transform:none !important;" @click="openUrl(bookmark.url)">{{ bookmark.name.substring(0, 24) + "..." }}</v-btn>
+              <v-btn v-if="bookmark.name.length <= 24" tile block depressed style="text-transform:none !important;justify-content: space-between !important;padding: 0 8px;" @click="openUrl(bookmark.url)">
+                <span>{{ bookmark.name }}</span>
+                <span class="score" v-if="bookmark.score">Score: {{ bookmark.score }}</span>
+              </v-btn>
+              <v-btn v-else tile block depressed style="text-transform:none !important;justify-content: space-between !important;padding: 0 8px;" @click="openUrl(bookmark.url)">
+                <span>{{ bookmark.name.substring(0, 24) + "..." }}</span>
+                <span class="score" v-if="bookmark.score">Score: {{ bookmark.score }}</span>
+              </v-btn>
             </v-col>
             <v-col dense cols="2" @click="deleteBookmark(bookmark)">
-              <v-btn tile block color="error">
+              <v-btn tile block depressed color="error">
                 <v-icon>
                   mdi-delete
                 </v-icon>
@@ -338,7 +344,7 @@ export default {
         const bookmarks_json = response.data.bookmarks;
         var bookmarks = [];
         for (const [key, value] of Object.entries(bookmarks_json)) {
-          bookmarks.push({"id": key, "name": value.title, "url": value.url});
+          bookmarks.push({"id": key, "name": value.title, "url": value.url, "score": value.score});
         }
         vm.bookmarks = bookmarks;
         vm.snackbar_text = "Bookmark search results retrieved successfully.";
@@ -386,5 +392,9 @@ export default {
 p {
   font-size: 20px;
 }
-
+.score {
+  font-size: 9px;
+  color: #999;
+  font-style: italic;
+}
 </style>
