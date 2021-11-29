@@ -58,7 +58,7 @@
               <v-toolbar>
                 <v-spacer />
                 <v-toolbar-title class="headline text-uppercase">
-                  <h6>Hello, {{ user.email }}</h6>
+                  <h6>Hello, {{ user.user.email }}</h6>
                 </v-toolbar-title>
                 <v-spacer />
               </v-toolbar>
@@ -125,7 +125,7 @@
               <v-btn v-if="bookmark.name.length <= 24" tile block style="text-transform:none !important;" @click="openUrl(bookmark.url)">{{ bookmark.name }}</v-btn>
               <v-btn v-else tile block style="text-transform:none !important;" @click="openUrl(bookmark.url)">{{ bookmark.name.substring(0, 24) + "..." }}</v-btn>
             </v-col>
-            <v-col dense cols="2">
+            <v-col dense cols="2" @click="deleteBookmark(bookmark)">
               <v-btn tile block color="error">
                 <v-icon>
                   mdi-delete
@@ -175,10 +175,7 @@ export default {
       authed: false,
       bookmark_name: "",
       bookmark_url: "",
-      bookmarks: [
-        {name: "Bookmark1", url: "https://www.linkedin.com"},
-        {name: "Bookmark2", url: "https://www.reddit.com"}
-      ],
+      bookmarks: [],
       query: "",
       selected_top: {name: "Top5", value: 5},
       top_items: [
@@ -203,6 +200,7 @@ export default {
             vm.authed = true;
             vm.snackbar_text = "Successfully registered and logged in.";
             vm.snackbar = true;
+            console.log("Successfully registered and logged in.");
             console.log(vm.user);
           } else {
             if (response.message.code == "auth/weak-password"){
@@ -230,6 +228,7 @@ export default {
             vm.loadAllBookmarks(false);
             vm.snackbar_text = "Successfully logged in.";
             vm.snackbar = true;
+            console.log("Successfully logged in.");
             console.log(vm.user);
           } else {
             if (response.message.code == "auth/user-not-found"){
@@ -284,8 +283,16 @@ export default {
     },
     addBookmark() {
       var vm = this;
-      api.post("/add_bookmark").then((response) => {
+      const config = {
+        headers: {'Content-Type': 'multipart/form-data', 'Authorization': vm.user.token}
+      };
+      var body = new FormData();
+      body.append('bookmark_name', vm.bookmark_name);
+      body.append('webpage_url', vm.bookmark_url);
+      api.post("/add_bookmark", body, config).then((response) => {
         console.log(response);
+        var id = response.data.bookmark_id;
+        vm.bookmarks.push({"id": id, "name": vm.bookmark_name, "url": vm.bookmark_url})
         vm.snackbar_text = "Sucessfully added bookmark.";
         vm.snackbar = true;
       }).catch((error) => {
@@ -294,10 +301,46 @@ export default {
         vm.snackbar = true;
       });
     },
+    deleteBookmark(delete_bookmark) {
+      var vm = this;
+      const config = {
+        headers: {'Content-Type': 'multipart/form-data', 'Authorization': vm.user.token}
+      };
+      var body = new FormData();
+      body.append('bookmark_id', delete_bookmark.id);
+      api.post("/delete_bookmark", body, config).then((response) => {
+        console.log(response);
+        for (let bookmark of vm.bookmarks) {
+          if (bookmark.id == delete_bookmark.id) {
+            vm.bookmarks = vm.bookmarks.filter(item => item.id !== bookmark.id);
+            break;
+          }
+        }
+        vm.snackbar_text = "Sucessfully deleted bookmark.";
+        vm.snackbar = true;
+      }).catch((error) => {
+        console.log(error);
+        vm.snackbar_text = "Error deleting bookmark.";
+        vm.snackbar = true;
+      });
+    },
     searchBookmarks() {
       var vm = this;
-      api.post("/search_bookmark").then((response) => {
+      const config = {
+        headers: {'Content-Type': 'multipart/form-data', 'Authorization': vm.user.token}
+      };
+      var body = new FormData();
+      body.append('query', vm.query);
+      body.append('top_n', vm.selected_top.value);
+      console.log(vm.selected_top.value);
+      api.post("/search_bookmark", body, config).then((response) => {
         console.log(response);
+        const bookmarks_json = response.data.bookmarks;
+        var bookmarks = [];
+        for (const [key, value] of Object.entries(bookmarks_json)) {
+          bookmarks.push({"id": key, "name": value.title, "url": value.url});
+        }
+        vm.bookmarks = bookmarks;
         vm.snackbar_text = "Bookmark search results retrieved successfully.";
         vm.snackbar = true;
       }).catch((error) => {
@@ -308,8 +351,17 @@ export default {
     },
     loadAllBookmarks(messageBoolean) {
       var vm = this;
-      api.get("/all_bookmarks").then((response) => {
+      const config = {
+        headers: {'Authorization': vm.user.token}
+      };
+      api.get("/get_all_bookmarks", config).then((response) => {
         console.log(response);
+        const bookmarks_json = response.data.bookmarks;
+        var bookmarks = [];
+        for (const [key, value] of Object.entries(bookmarks_json)) {
+          bookmarks.push({"id": key, "name": value.title, "url": value.url});
+        }
+        vm.bookmarks = bookmarks;
         if (messageBoolean){
           vm.snackbar_text = "All bookmarks retrieved successfully.";
           vm.snackbar = true;
