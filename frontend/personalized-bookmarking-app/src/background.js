@@ -9,7 +9,18 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.command == "checkAuth") {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        sendResponse({status: "success", message: user});
+        if (user.stsTokenManager.isExpired) {
+          auth.currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
+            console.log(user);
+            sendResponse({status: "success", message: {"user": user, "token": idToken}});
+          }).catch(function(error) {
+            sendResponse({status: "no-auth", message: null});
+          })
+        } else {
+          console.log(user);
+          const idToken = user.accessToken;
+          sendResponse({status: "success", message: {"user": user, "token": idToken}});
+        }
       } else {
         sendResponse({status: "no-auth", message: null});
       }
@@ -21,7 +32,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     var password = message.data.password;
     createUserWithEmailAndPassword(auth, email, password).then((userCredential) => {
       const user = userCredential.user;
-      sendResponse({status: "success", message: user});
+      const idToken = user.accessToken;
+      console.log(user)
+      sendResponse({status: "success", message: {"user": user, "token": idToken}});
     }).catch((error) => {
       sendResponse({status: "error", message: error});
     });
@@ -32,7 +45,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     var password = message.data.password;
     signInWithEmailAndPassword(auth, email, password).then((userCredential) => {
       const user = userCredential.user;
-      sendResponse({status: "success", message: user});
+      const idToken = user.accessToken;
+      console.log(user)
+      sendResponse({status: "success", message: {"user": user, "token": idToken}});
     }).catch((error) => {
       sendResponse({status: "error", message: error});
     });

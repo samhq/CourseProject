@@ -38,11 +38,11 @@
       <v-row>
         <v-col cols="2"></v-col>
         <v-col cols="3">
-          <v-btn type="button" color="primary" v-on:click="login()">Login</v-btn>
+          <v-btn type="button" color="primary" @click="login()">Login</v-btn>
         </v-col>
         <v-col cols="2"></v-col>
         <v-col cols="4">
-          <v-btn type="button" color="secondary" v-on:click="register()">Register</v-btn>
+          <v-btn type="button" color="secondary" @click="register()">Register</v-btn>
         </v-col>
         <v-col cols="1"></v-col>
       </v-row>
@@ -72,11 +72,11 @@
           <v-row>
             <v-col cols="2"></v-col>
             <v-col cols="4">
-              <v-btn type="button" color="primary" v-on:click="addBookmark()">Add Bookmark</v-btn>
+              <v-btn type="button" color="primary" @click="addBookmark()">Add Bookmark</v-btn>
             </v-col>
             <v-col cols="1"></v-col>
             <v-col cols="3">
-              <v-btn type="button" color="error" v-on:click="logout()">Logout</v-btn>
+              <v-btn type="button" color="error" @click="logout()">Logout</v-btn>
             <v-col>
             <v-col cols="2"></v-col>
           <v-row>
@@ -96,10 +96,10 @@
           <v-row>
             <v-col cols="2"></v-col>
             <v-col cols="3">
-              <v-btn type="button" color="primary" v-on:click="switchTab(2); searchBookmarks()">Search</v-btn>
+              <v-btn type="button" color="primary" @click="switchTab(2); searchBookmarks()">Search</v-btn>
             </v-col>
             <v-col cols="4">
-              <v-btn type="button" color="secondary" v-on:click="switchTab(2); loadAllBookmarks(true)">All Bookmarks</v-btn>
+              <v-btn type="button" color="secondary" @click="switchTab(2); loadAllBookmarks(true)">All Bookmarks</v-btn>
             <v-col>
             <v-col cols="1"></v-col>
             <v-col cols="2"></v-col>
@@ -122,14 +122,19 @@
           </v-row>
           <v-row dense v-for="bookmark in bookmarks" :key="bookmark.name">
             <v-col no-gutters cols="10">
-              <v-btn v-if="bookmark.name.length <= 30" tile block depressed style="text-transform:none !important;justify-content: space-between !important;padding: 0 8px;" @click="openUrl(bookmark.url)">
+              <v-tooltip top>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn v-if="bookmark.name.length <= 30" tile block depressed style="text-transform:none !important;justify-content: space-between !important;padding: 0 8px;" @click="openUrl(bookmark.url)">
+                    <span>{{ bookmark.name }}</span>
+                    <span class="score" v-if="bookmark.score">Score: {{ bookmark.score.toFixed(2) }}</span>
+                  </v-btn>
+                  <v-btn v-else tile block depressed style="text-transform:none !important;justify-content: space-between !important;padding: 0 8px;" @click="openUrl(bookmark.url)" v-bind="attrs" v-on="on">
+                    <span>{{ bookmark.name.substring(0, 30) + "..." }}</span>
+                    <span class="score" v-if="bookmark.score">Score: {{ bookmark.score.toFixed(2) }}</span>
+                  </v-btn>
+                </template>
                 <span>{{ bookmark.name }}</span>
-                <span class="score" v-if="bookmark.score">Score: {{ bookmark.score.toFixed(2) }}</span>
-              </v-btn>
-              <v-btn v-else tile block depressed style="text-transform:none !important;justify-content: space-between !important;padding: 0 8px;" @click="openUrl(bookmark.url)">
-                <span>{{ bookmark.name.substring(0, 30) + "..." }}</span>
-                <span class="score" v-if="bookmark.score">Score: {{ bookmark.score.toFixed(2) }}</span>
-              </v-btn>
+              </v-tooltip>
             </v-col>
             <v-col dense cols="2" @click="deleteBookmark(bookmark)">
               <v-btn tile block depressed color="error">
@@ -158,13 +163,15 @@ export default {
   components: {VueTabs, VTab},
   created: function() {
     var vm = this;
-    console.log(vm.user);
     // set current page title as bookmark name
     vm.setTitleAsBookmarkName();
     // check if user is logged in
     chrome.runtime.sendMessage({command: "checkAuth"}, (response) => {
       if (response.status == "success") {
-        vm.user = response.message;
+        vm.user = response.message.user;
+        vm.token = response.message.token;
+        console.log(vm.user);
+        console.log(vm.token);
         vm.authed = true;
         // retrieve all bookmarks and display them in the bookmarks tab upon initlal page load
         vm.loadAllBookmarks(false);
@@ -179,6 +186,7 @@ export default {
       email: "",
       password: "",
       user: null,
+      token: null,
       authed: false,
       bookmark_name: "",
       bookmark_url: "",
@@ -195,6 +203,7 @@ export default {
       snackbar: false,
       snackbar_text: "",
       tabName: "",
+      hover: false,
     }
   },
   methods: {    
@@ -203,7 +212,8 @@ export default {
       chrome.runtime.sendMessage({command: "register", data: {email: vm.email, password: vm.password}}, (response) => {
         if (response) {
           if (response.status == "success") {
-            vm.user = response.message;
+            vm.user = response.message.user;
+            vm.token = response.message.token;
             vm.authed = true;
             vm.snackbar_text = "Successfully registered and logged in.";
             vm.snackbar = true;
@@ -230,7 +240,8 @@ export default {
       chrome.runtime.sendMessage({command: "login", data: {email: vm.email, password: vm.password}}, (response) => {
         if (response) {
           if (response.status == "success") {
-            vm.user = response.message;
+            vm.user = response.message.user;
+            vm.token = response.message.token;
             vm.authed = true;
             vm.loadAllBookmarks(false);
             vm.snackbar_text = "Successfully logged in.";
@@ -291,15 +302,13 @@ export default {
     addBookmark() {
       var vm = this;
       const config = {
-        headers: {'Content-Type': 'multipart/form-data', 'Authorization': vm.user.stsTokenManager.accessToken}
+        headers: {'Content-Type': 'multipart/form-data', 'Authorization': vm.token}
       };
       var body = new FormData();
       body.append('bookmark_name', vm.bookmark_name);
       body.append('webpage_url', vm.bookmark_url);
       api.post("/add_bookmark", body, config).then((response) => {
         console.log(response);
-        var id = response.data.bookmark_id;
-        vm.bookmarks.push({"id": id, "name": vm.bookmark_name, "url": vm.bookmark_url})
         vm.snackbar_text = "Sucessfully added bookmark.";
         vm.snackbar = true;
       }).catch((error) => {
@@ -311,7 +320,7 @@ export default {
     deleteBookmark(delete_bookmark) {
       var vm = this;
       const config = {
-        headers: {'Content-Type': 'multipart/form-data', 'Authorization': vm.user.stsTokenManager.accessToken}
+        headers: {'Content-Type': 'multipart/form-data', 'Authorization': vm.token}
       };
       var body = new FormData();
       body.append('bookmark_id', delete_bookmark.id);
@@ -334,7 +343,7 @@ export default {
     searchBookmarks() {
       var vm = this;
       const config = {
-        headers: {'Content-Type': 'multipart/form-data', 'Authorization': vm.user.stsTokenManager.accessToken}
+        headers: {'Content-Type': 'multipart/form-data', 'Authorization': vm.token}
       };
       var body = new FormData();
       body.append('query', vm.query);
@@ -359,7 +368,7 @@ export default {
     loadAllBookmarks(messageBoolean) {
       var vm = this;
       const config = {
-        headers: {'Authorization': vm.user.stsTokenManager.accessToken}
+        headers: {'Authorization': vm.token}
       };
       api.get("/get_all_bookmarks", config).then((response) => {
         console.log(response);
