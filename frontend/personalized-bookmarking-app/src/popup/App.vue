@@ -124,11 +124,11 @@
             <v-col no-gutters cols="10">
               <v-btn v-if="bookmark.name.length <= 30" tile block depressed style="text-transform:none !important;justify-content: space-between !important;padding: 0 8px;" @click="openUrl(bookmark.url)">
                 <span>{{ bookmark.name }}</span>
-                <span class="score" v-if="bookmark.score">Score: {{ bookmark.score }}</span>
+                <span class="score" v-if="bookmark.score">Score: {{ bookmark.score.toFixed(2) }}</span>
               </v-btn>
               <v-btn v-else tile block depressed style="text-transform:none !important;justify-content: space-between !important;padding: 0 8px;" @click="openUrl(bookmark.url)">
                 <span>{{ bookmark.name.substring(0, 30) + "..." }}</span>
-                <span class="score" v-if="bookmark.score">Score: {{ bookmark.score }}</span>
+                <span class="score" v-if="bookmark.score">Score: {{ bookmark.score.toFixed(2) }}</span>
               </v-btn>
             </v-col>
             <v-col dense cols="2" @click="deleteBookmark(bookmark)">
