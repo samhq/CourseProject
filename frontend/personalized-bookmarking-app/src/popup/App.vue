@@ -122,12 +122,12 @@
           </v-row>
           <v-row dense v-for="bookmark in bookmarks" :key="bookmark.name">
             <v-col no-gutters cols="10">
-              <v-btn v-if="bookmark.name.length <= 24" tile block depressed style="text-transform:none !important;justify-content: space-between !important;padding: 0 8px;" @click="openUrl(bookmark.url)">
+              <v-btn v-if="bookmark.name.length <= 30" tile block depressed style="text-transform:none !important;justify-content: space-between !important;padding: 0 8px;" @click="openUrl(bookmark.url)">
                 <span>{{ bookmark.name }}</span>
                 <span class="score" v-if="bookmark.score">Score: {{ bookmark.score }}</span>
               </v-btn>
               <v-btn v-else tile block depressed style="text-transform:none !important;justify-content: space-between !important;padding: 0 8px;" @click="openUrl(bookmark.url)">
-                <span>{{ bookmark.name.substring(0, 24) + "..." }}</span>
+                <span>{{ bookmark.name.substring(0, 30) + "..." }}</span>
                 <span class="score" v-if="bookmark.score">Score: {{ bookmark.score }}</span>
               </v-btn>
             </v-col>
@@ -158,6 +158,7 @@ export default {
   components: {VueTabs, VTab},
   created: function() {
     var vm = this;
+    console.log(vm.user);
     // set current page title as bookmark name
     vm.setTitleAsBookmarkName();
     // check if user is logged in
