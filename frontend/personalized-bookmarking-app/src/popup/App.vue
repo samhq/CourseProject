@@ -270,6 +270,7 @@ export default {
         if (response) {
           if (response.status == "success") {
             vm.user = null;
+            vm.token = null;
             vm.authed = false;
           } else {
             vm.snackbar_text = "Error logging out.";
