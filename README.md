@@ -56,7 +56,7 @@ Subsequently, click on "Project Overview" on the sidebar and select "Web" in the
 
 Change directory to the `/backend` folder and install the required python modules using `pip install -r requirements.txt`.
 
-Then, in `main.py`, replace the `host="0.0.0.0"` field with `host="127.0.0.1"`. Also, replace the fields in `fbAdminConfig.json` and `fbconfig.json` with the `const firebaseConfig` json fields you have copied down earlier in the ["Setting up Firebase"](#setting-up-firebase) step.
+Then, in `main.py`, replace the `host="0.0.0.0"` field with `host="127.0.0.1"`. Also, replace the fields in `fbAdminConfig.json` and `fbconfig.json` with the `const firebaseConfig` json fields you have copied down earlier in the "Setting up Firebase" step.
 
 Run the backend server using `python main.py`. The backend server will be hosted locally on <http://localhost:5000>.
 
@@ -64,7 +64,7 @@ Run the backend server using `python main.py`. The backend server will be hosted
 
 Change directory to the `/frontend/personalized-bookmarking-app` folder and install the required Node.js modules using `npm install`.
 
-Similarly, replace the fields in `/src/config.json` with the `const firebaseConfig` json fields you have copied down earlier in the ["Setting up Firebase"](#setting-up-firebase) step.
+Similarly, replace the fields in `/src/config.json` with the `const firebaseConfig` json fields you have copied down earlier in the "Setting up Firebase" step.
 
 ### 4. Building frontend files
 
