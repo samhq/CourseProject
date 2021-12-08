@@ -36,6 +36,8 @@ The installation instructions are as follows:
 4. Select the `.../frontend/personalized-bookmarking-app/dist` folder as the extension directory.
 5. The extension is installed! Click on the jigsaw icon on the right side of the address bar to pin the bookmark extension (as represented by the book icon) to the toolbar.
 
+You may use our demo account (email: demo@test.com, password: 123456) to log in into the app if you do not wish to register an account.
+
 ---
 
 ## Advanced Installation
