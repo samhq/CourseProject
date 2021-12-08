@@ -18,6 +18,11 @@ Intelligent Browsing
 - Ying-Chen Lee (NetID: `yclee6`)
 
 ---
+## Tutorial Presentation
+
+Our tutorial presentation is hosted on UIUC Box. You may view it [here](https://uofi.box.com/s/f5fd5acnr0edicrc94d207l9zu7peh8f).
+
+---
 
 ## Simple Installation
 
