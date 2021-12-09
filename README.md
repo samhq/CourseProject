@@ -18,6 +18,7 @@ Intelligent Browsing
 - Ying-Chen Lee (NetID: `yclee6`)
 
 ---
+
 ## Tutorial Presentation
 
 Our tutorial presentation is hosted on UIUC Box. You may view it [here](https://uofi.box.com/s/f5fd5acnr0edicrc94d207l9zu7peh8f).
@@ -63,7 +64,10 @@ Subsequently, click on "Project Overview" on the sidebar and select "Web" in the
 
 Change directory to the `/backend` folder and install the required python modules using `pip install -r requirements.txt`.
 
-Then, in `main.py`, replace the `host="0.0.0.0"` field with `host="127.0.0.1"`. Also, replace the fields in `fbAdminConfig.json` and `fbconfig.json` with the `const firebaseConfig` json fields you have copied down earlier in the "Setting up Firebase" step.
+Then, in `main.py`, replace the `host="0.0.0.0"` field with `host="127.0.0.1"`. You'll need two config files in the `/backend` directory for the backend to connect and use Firebase:
+
+- `fbconfig.json`: Copy the `const firebaseConfig` json fields you have copied down earlier in the "Setting up Firebase" step in a new `fbconfig.json` file.
+- `fbAdminConfig.json`: Go to your Firebase project, then `Project Settings` -> `Service Accounts` -> `Generate a new private key`. A new JSON file will be downloaded. Rename it to `fbAdminConfig.json` and save in the `/backend` directory.
 
 Run the backend server using `python main.py`. The backend server will be hosted locally on <http://localhost:5000>.
 
@@ -76,3 +80,7 @@ Similarly, replace the fields in `/src/config.json` with the `const firebaseConf
 ### 4. Building frontend files
 
 Finally, build the Chrome extension files using `npm run build`. The newly generated files will be located in the `/dist` folder. You may then refer to the ["Simple Installation"](#simple-installation) section to install the Chrome extension.
+
+### 5. Deployment
+
+To deploy the backend API service, you can try a few ways. We have used Google Cloud Run (GCP) to deploy our backend in a serverless, autoscaled and load-balanced environment. You can check the tutorial [Build and deploy a Python service](https://cloud.google.com/run/docs/quickstarts/build-and-deploy/python) for using Cloud Run. Alternatively, you can deploy the backend into any VM and setup the web server yourself.
